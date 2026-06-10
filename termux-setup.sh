@@ -1,122 +1,124 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # ============================================
 # Justin X Nika - Bot WhatsApp para Termux
-# Script de Instalação Automática (Versão Melhorada)
+# Script de Instalação + Configuração Inicial (v3.2)
 # ============================================
 
 set -e
-
-echo -e "\e[36m=========================================="
-echo -e "  JUSTIN X NIKA - INSTALAÇÃO TERMUX"
-echo -e "==========================================\e[0m"
-echo ""
 
 # Cores
 RED='\e[31m'
 GREEN='\e[32m'
 YELLOW='\e[33m'
 BLUE='\e[34m'
+CYAN='\e[36m'
 NC='\e[0m'
 
-echo -e "${GREEN}[INFO]${NC} Iniciando instalação do Justin X Nika no Termux..."
+clear
+echo -e "${CYAN}=========================================="
+echo -e "   JUSTIN X NIKA - CONFIGURAÇÃO TERMUX"
+echo -e "==========================================${NC}\n"
+
+echo -e "${GREEN}[INFO]${NC} Iniciando instalação e configuração do bot..."
 
 # 1. Atualizar pacotes
-echo -e "\n${YELLOW}[1/10]${NC} Atualizando pacotes do Termux..."
+echo -e "\n${YELLOW}[1/12]${NC} Atualizando pacotes..."
 pkg update -y && pkg upgrade -y
 
-# 2. Instalar dependências do sistema
-echo -e "\n${YELLOW}[2/10]${NC} Instalando dependências do sistema..."
-pkg install -y \
-    nodejs \
-    ffmpeg \
-    git \
-    yarn \
-    python \
-    libwebp \
-    libjpeg-turbo \
-    libpng \
-    libtiff \
-    python-pip
+# 2. Instalar dependências
+echo -e "\n${YELLOW}[2/12]${NC} Instalando dependências do sistema..."
+pkg install -y nodejs ffmpeg git yarn python libwebp libjpeg-turbo libpng python-pip tmux
 
-# 3. Verificar Node.js
-echo -e "\n${YELLOW}[3/10]${NC} Verificando Node.js..."
-node --version || { echo -e "${RED}[ERRO]${NC} Node.js não instalado!"; exit 1; }
-yarn --version || { echo -e "${RED}[ERRO]${NC} Yarn não instalado!"; exit 1; }
+# 3. Verificar instalação
+echo -e "\n${YELLOW}[3/12]${NC} Verificando Node.js e Yarn..."
+node --version || { echo -e "${RED}[ERRO]${NC} Node.js não encontrado!"; exit 1; }
+yarn --version || { echo -e "${RED}[ERRO]${NC} Yarn não encontrado!"; exit 1; }
 
-# 4. Instalar dependências do bot (com tratamento de erro)
-echo -e "\n${YELLOW}[4/10]${NC} Instalando dependências do bot (pode demorar 5-10 minutos)..."
-echo -e "${BLUE}[INFO]${NC} Isso é normal, aguarde..."
-
-# Configurar npm para Termux
+# 4. Instalar dependências do bot
+echo -e "\n${YELLOW}[4/12]${NC} Instalando dependências do bot (pode demorar)..."
 npm config set python python
-npm config set sharp_binary_host_mirror https://github.com/lovell/sharp-libvips/releases/download
-
-# Instalar dependências
 if yarn install; then
     echo -e "${GREEN}[OK]${NC} Dependências instaladas com Yarn"
 else
-    echo -e "${YELLOW}[AVISO]${NC} Yarn falhou, tentando com npm..."
+    echo -e "${YELLOW}[AVISO]${NC} Tentando com npm..."
     npm install --legacy-peer-deps
 fi
 
-# 5. Criar pastas necessárias
-echo -e "\n${YELLOW}[5/10]${NC} Criando pastas necessárias..."
-mkdir -p session
-mkdir -p temp
+# 5. Criar pastas
+echo -e "\n${YELLOW}[5/12]${NC} Criando pastas..."
+mkdir -p session temp
 
-# 6. Configurar permissões
-echo -e "\n${YELLOW}[6/10]${NC} Configurando permissões..."
+# 6. Permissões
 chmod +x termux-setup.sh
 chmod +x connect.js 2>/dev/null || true
 
-# 7. Configurar armazenamento
-echo -e "\n${YELLOW}[7/10]${NC} Configurando acesso ao armazenamento..."
+# 7. Armazenamento
+echo -e "\n${YELLOW}[6/12]${NC} Configurando armazenamento..."
 termux-setup-storage
 
-# 8. Instalar tmux (para manter bot rodando)
-echo -e "\n${YELLOW}[8/10]${NC} Instalando tmux (recomendado para manter o bot rodando)..."
-pkg install -y tmux
+# ============================================
+# CONFIGURAÇÃO INTERATIVA DO OWNER
+# ============================================
+echo -e "\n${CYAN}=========================================="
+echo -e "   CONFIGURAÇÃO INICIAL DO BOT"
+echo -e "==========================================${NC}\n"
 
-# 9. Verificar FFmpeg
-echo -e "\n${YELLOW}[9/10]${NC} Verificando FFmpeg..."
-ffmpeg -version | head -1 || echo -e "${YELLOW}[AVISO]${NC} FFmpeg pode precisar de configuração manual"
+echo -e "${YELLOW}Deseja configurar o número do dono do bot agora?${NC}"
+echo -e "  ${GREEN}[1] Sim${NC}  - Vou inserir meu número"
+echo -e "  ${RED}[2] Não${NC}  - Manter configuração padrão"
+echo ""
+read -p "Escolha uma opção (1 ou 2): " CONFIG_OWNER
 
-# 10. Finalização
-echo -e "\n${YELLOW}[10/10]${NC} Finalizando instalação..."
+if [ "$CONFIG_OWNER" == "1" ]; then
+    echo ""
+    echo -e "${BLUE}Digite o número do dono (sem + e sem espaços):${NC}"
+    echo -e "Exemplo: ${YELLOW}5511999999999${NC}"
+    read -p "Número: " OWNER_NUMBER
+    
+    if [ ! -z "$OWNER_NUMBER" ]; then
+        # Atualiza config.js
+        sed -i "s/global.owner = \['[^']*'\]/global.owner = ['$OWNER_NUMBER']/" setting/config.js
+        echo -e "${GREEN}[OK]${NC} Número do dono configurado: $OWNER_NUMBER"
+        
+        # Atualiza Own.json
+        echo "[\"$OWNER_NUMBER\"]" > Access/Own.json
+        echo -e "${GREEN}[OK]${NC} Arquivo Access/Own.json atualizado"
+    else
+        echo -e "${YELLOW}[AVISO]${NC} Número vazio. Mantendo configuração padrão."
+    fi
+else
+    echo -e "${YELLOW}[INFO]${NC} Configuração do dono mantida como padrão."
+fi
+
+echo ""
+
+# 8. Verificar FFmpeg
+echo -e "${YELLOW}[7/12]${NC} Verificando FFmpeg..."
+ffmpeg -version | head -1 || echo -e "${YELLOW}[AVISO]${NC} FFmpeg pode precisar de reinstalação"
+
+# 9. Finalização
+echo -e "\n${YELLOW}[8/12]${NC} Finalizando instalação..."
 
 echo ""
 echo -e "${GREEN}=========================================="
-echo -e "     INSTALAÇÃO CONCLUÍDA COM SUCESSO!"
+echo -e "     INSTALAÇÃO CONCLUÍDA!"
 echo -e "==========================================${NC}"
 echo ""
 
-echo -e "${GREEN}Comandos para usar o bot:${NC}"
+echo -e "${GREEN}Próximos passos:${NC}"
 echo ""
-echo -e "  ${YELLOW}Iniciar o bot (simples):${NC}"
-echo -e "    ${BLUE}yarn start${NC}    ou    ${BLUE}node connect.js${NC}"
+echo -e "  ${YELLOW}1. Iniciar o bot:${NC}"
+echo -e "     ${BLUE}yarn start${NC}   ou   ${BLUE}node connect.js${NC}"
 echo ""
-echo -e "  ${YELLOW}Iniciar com tmux (recomendado):${NC}"
-echo -e "    ${BLUE}tmux new -s bot${NC}"
-echo -e "    ${BLUE}node connect.js${NC}"
-echo -e "    (Pressione Ctrl+B depois D para minimizar)"
+echo -e "  ${YELLOW}2. Escanear o QR Code${NC} com seu WhatsApp"
 echo ""
-echo -e "  ${YELLOW}Voltar para o tmux:${NC}"
-echo -e "    ${BLUE}tmux attach -t bot${NC}"
-echo ""
-echo -e "  ${YELLOW}Parar o bot:${NC}"
-echo -e "    Pressione ${RED}CTRL + C${NC}"
+echo -e "  ${YELLOW}3. Após conectar, entre manualmente no canal oficial:${NC}"
+echo -e "     ${CYAN}https://whatsapp.com/channel/0029VbArk5aBVJl7HTKxKw0j${NC}"
 echo ""
 
-echo -e "${GREEN}Primeira execução:${NC}"
-echo -e "  - O bot vai gerar um QR Code"
-echo -e "  - Escaneie com o WhatsApp do seu número"
-echo -e "  - A sessão será salva automaticamente em ./session"
-echo ""
-
-echo -e "${YELLOW}Dicas importantes:${NC}"
-echo -e "  • Mantenha o Termux aberto ou use tmux"
-echo -e "  • Se der erro de sharp, rode: ${BLUE}npm rebuild sharp${NC}"
-echo -e "  • Se der erro de ffmpeg, rode: ${BLUE}pkg install ffmpeg${NC}"
+echo -e "${YELLOW}Dicas:${NC}"
+echo -e "  • Use tmux para manter o bot rodando em background"
+echo -e "  • Se der erro de Sharp: ${BLUE}npm rebuild sharp${NC}"
 echo ""
 
 echo -e "${GREEN}==========================================${NC}"
