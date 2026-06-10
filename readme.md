@@ -1,65 +1,212 @@
-# 🤖 Justin X Nika
+# 🤖 Justin X Nika Termux
 
-> **Bot WhatsApp Multi-Device** • Otimizado para **Termux**
+Bot WhatsApp Multi-Device adaptado para rodar no **Termux**.
 
----
-
-## 📋 Índice
-
-| Seção | Descrição |
-|-------|-----------|
-| [Sobre](#sobre) | O que é o bot |
-| [Instalação](#instalação) | Como instalar |
-| [Comandos](#comandos) | Lista de comandos |
-| [Após Fechar o Termux](#após-fechar-o-termux) | Como voltar o bot |
-| [Problemas Comuns](#problemas-comuns) | Soluções de erros |
+> Repositório: https://github.com/MutanoXX/JustinXNika_Termux
 
 ---
 
-## Sobre
+## 📌 O que este projeto faz
 
-**Justin X Nika** é um bot WhatsApp completo baseado em **@whiskeysockets/baileys**.
+O **Justin X Nika** é um bot WhatsApp baseado em Baileys, com recursos para grupos, mídia, downloads, administração e comandos de owner.
 
-Ele oferece recursos avançados de **grupo**, **downloads**, **mídia** e **administração**.
+Esta versão foi ajustada para facilitar a instalação no Android usando **Termux**, incluindo correções para dependências problemáticas como o `sharp`.
 
 ---
 
-## Instalação
+## ✅ Melhorias do setup Termux
 
-### Método Rápido (Recomendado)
+O arquivo principal de preparação é:
 
 ```bash
-pkg update -y && pkg install -y nodejs ffmpeg git yarn python libwebp tmux build-essential clang && \
-git clone https://github.com/MutanoXX/JustinXNika_Termux.git && \
-cd JustinXNika_Termux && \
-bash termux-setup.sh
+termux-setup.sh
 ```
 
-### Passo a Passo
+Ele faz automaticamente:
+
+- atualiza os pacotes do Termux;
+- instala dependências do sistema;
+- instala dependências Node.js do bot;
+- corrige o erro do módulo **Sharp** no Android/Termux;
+- remove sessões antigas **somente se existirem**:
 
 ```bash
-# 1. Atualizar Termux
+session/
+sessions/
+auth_info/
+```
+
+- pergunta se o usuário deseja iniciar o bot no final;
+- se o usuário responder `s`, inicia com:
+
+```bash
+node connect.js
+```
+
+---
+
+## 📲 Instalação rápida
+
+Copie e cole no Termux:
+
+```bash
 pkg update -y && pkg upgrade -y
-
-# 2. Instalar dependências
 pkg install -y nodejs ffmpeg git yarn python libwebp tmux build-essential clang
-
-# 3. Clonar o repositório
 git clone https://github.com/MutanoXX/JustinXNika_Termux.git
 cd JustinXNika_Termux
-
-# 4. Executar o instalador
 bash termux-setup.sh
 ```
 
 ---
 
-## Comandos
+## 🧩 Instalação passo a passo
+
+### 1. Atualizar o Termux
+
+```bash
+pkg update -y && pkg upgrade -y
+```
+
+### 2. Instalar dependências
+
+```bash
+pkg install -y nodejs ffmpeg git yarn python libwebp tmux build-essential clang
+```
+
+### 3. Clonar o projeto
+
+```bash
+git clone https://github.com/MutanoXX/JustinXNika_Termux.git
+cd JustinXNika_Termux
+```
+
+### 4. Rodar o setup
+
+```bash
+bash termux-setup.sh
+```
+
+No final, digite `s` se quiser iniciar o bot imediatamente.
+
+---
+
+## ▶️ Como iniciar o bot
+
+### Método recomendado
+
+Sempre que quiser preparar o ambiente, limpar sessões antigas e corrigir o Sharp antes de iniciar:
+
+```bash
+cd ~/JustinXNika_Termux
+bash termux-setup.sh
+```
+
+Se você responder `s` no final, o bot será iniciado com:
+
+```bash
+node connect.js
+```
+
+### Iniciar direto
+
+Se o ambiente já estiver preparado e você quiser iniciar direto:
+
+```bash
+cd ~/JustinXNika_Termux
+node connect.js
+```
+
+ou:
+
+```bash
+yarn start
+```
+
+> Observação: iniciar direto com `node connect.js` ou `yarn start` não roda a limpeza/correção do setup. Para limpar `session`, `sessions` e `auth_info`, use `bash termux-setup.sh`.
+
+---
+
+## 🔄 Após fechar o Termux
+
+Se fechou o Termux e quer abrir o bot novamente com ambiente limpo:
+
+```bash
+cd ~/JustinXNika_Termux
+bash termux-setup.sh
+```
+
+O setup vai verificar e remover somente se existirem:
+
+```bash
+session/
+sessions/
+auth_info/
+```
+
+Depois ele pergunta se deseja iniciar o bot.
+
+---
+
+## 🖥️ Usando tmux
+
+Para deixar o bot rodando mesmo após sair da tela do Termux:
+
+```bash
+cd ~/JustinXNika_Termux
+tmux new -s bot
+bash termux-setup.sh
+```
+
+Para minimizar a sessão:
+
+```text
+Ctrl + B, depois D
+```
+
+Para voltar:
+
+```bash
+tmux attach -t bot
+```
+
+Se a sessão antiga travar:
+
+```bash
+tmux kill-session -t bot
+tmux new -s bot
+bash termux-setup.sh
+```
+
+---
+
+## ⚙️ Configuração opcional do número
+
+Edite o arquivo:
+
+```bash
+setting/config.js
+```
+
+Procure ou defina:
+
+```js
+global.myNumber = ['55SEU_NUMERO']
+```
+
+Exemplo:
+
+```js
+global.myNumber = ['5567999999999']
+```
+
+---
+
+## 🧾 Comandos principais
 
 ### 👑 Owner Menu
 
 | Comando | Descrição |
-|---------|-----------|
+|---|---|
 | `.addprem` | Adicionar usuário Premium |
 | `.delprem` | Remover usuário Premium |
 | `.addown` | Adicionar novo Owner |
@@ -70,80 +217,100 @@ bash termux-setup.sh
 ### ⚔️ Geprek Menu
 
 | Comando | Descrição |
-|---------|-----------|
+|---|---|
 | `.nikspam` | Spam de mensagens |
 | `.tinvis` | Invisível |
-| `.jusui` | — |
+| `.jusui` | Comando do bot |
 | `.nikfreze` | Congelar |
 | `.delayxcombobox` | Combo com delay |
 | `.xcombogod` | Combo poderoso |
 
-### 🔥 All Petinggi
-
-- **Justin**
-- **Depay**
-
 ---
 
-## Após Fechar o Termux
-
-Se você fechou o Termux e quer voltar o bot:
-
-```bash
-# 1. Abra o Termux
-
-# 2. Entre na pasta
-cd JustinXNika_Termux
-
-# 3. Volte para a sessão
-tmux attach -t bot
-```
-
-Se a sessão não existir:
-
-```bash
-tmux new -s bot
-yarn start
-```
-
----
-
-## Problemas Comuns
+## 🛠️ Problemas comuns
 
 ### Erro do Sharp
 
-```bash
-npm rebuild sharp --build-from-source
+Erro exemplo:
+
+```text
+Cannot find module '../build/Release/sharp-android-arm64v8.node'
+Something went wrong installing the "sharp" module
 ```
 
-### Bot não gera QR Code
+Solução:
 
 ```bash
-rm -rf session
-node connect.js
+cd ~/JustinXNika_Termux
+bash termux-setup.sh
 ```
 
-### Bot cai após fechar Termux
+O setup recria o stub compatível com Termux/Android.
 
-Use **tmux**:
+---
+
+### Bot não gera QR Code ou não conecta
+
+Rode:
 
 ```bash
-tmux new -s bot
-node connect.js
+cd ~/JustinXNika_Termux
+bash termux-setup.sh
 ```
 
-Para voltar depois:
+O script remove as pastas de sessão apenas se elas existirem:
 
 ```bash
-tmux attach -t bot
+session/
+sessions/
+auth_info/
 ```
 
 ---
 
-## Créditos
+### `already-exists` ao entrar em grupo
 
-**Adaptado para Termux por:** [MutanoX](https://github.com/MutanoXX)  
-**Repositório Oficial:** https://github.com/MutanoXX/JustinXNika_Termux
+Significa que o bot provavelmente já está no grupo ou o convite já foi usado.
+
+---
+
+### `rate-limit` ao entrar em grupo
+
+Significa que o WhatsApp limitou muitas tentativas em sequência. Aguarde um tempo antes de tentar novamente.
+
+---
+
+## 📁 Estrutura básica
+
+```text
+JustinXNika_Termux/
+├── Access/
+├── System/
+├── setting/
+├── connect.js
+├── justin.js
+├── package.json
+├── readme.md
+└── termux-setup.sh
+```
+
+Pastas como `session`, `sessions`, `auth_info`, `temp` e `node_modules` são geradas durante o uso e não devem ser enviadas para o GitHub.
+
+---
+
+## 📢 Canal oficial
+
+```text
+https://whatsapp.com/channel/0029VbArk5aBVJl7HTKxKw0j
+```
+
+---
+
+## 👤 Créditos
+
+Adaptado para Termux por **MutanoX**.
+
+GitHub: https://github.com/MutanoXX
 
 ---
 

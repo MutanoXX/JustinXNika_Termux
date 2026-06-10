@@ -1,0 +1,13 @@
+node_modules/
+.yarn/
+npm-debug.log*
+yarn-error.log*
+
+# Sessões/autenticação geradas pelo WhatsApp/Baileys
+session/
+sessions/
+auth_info/
+
+# Arquivos temporários do bot
+temp/
+*.tmp
