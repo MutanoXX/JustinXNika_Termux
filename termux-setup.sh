@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # ============================================
 #   JUSTIN X NIKA - BOT WHATSAPP PARA TERMUX
-#   Versão 4.4 - Sharp Fake + Número Confiável (por MutanoX)
+#   Versão 4.5 - Sharp Fake + Sem Input de Número (por MutanoX)
 # ============================================
 
 set +e
@@ -34,20 +34,20 @@ echo -e "${GREEN}[INFO]${NC} Iniciando instalação do Justin X Nika...\n"
 #           INSTALAÇÃO
 # ============================================
 
-echo -e "${YELLOW}[1/8]${NC} Atualizando pacotes..."
+echo -e "${YELLOW}[1/7]${NC} Atualizando pacotes..."
 pkg update -y && pkg upgrade -y > /dev/null 2>&1
 
-echo -e "${YELLOW}[2/8]${NC} Instalando dependências do sistema..."
+echo -e "${YELLOW}[2/7]${NC} Instalando dependências do sistema..."
 pkg install -y nodejs ffmpeg git yarn python libwebp tmux build-essential clang > /dev/null 2>&1
 
-echo -e "${YELLOW}[3/8]${NC} Verificando Node.js..."
+echo -e "${YELLOW}[3/7]${NC} Verificando Node.js..."
 if ! command -v node &> /dev/null; then
     echo -e "${RED}[ERRO]${NC} Node.js não encontrado!"
     exit 1
 fi
 echo -e "      ${GREEN}Node.js:${NC} $(node --version)"
 
-echo -e "\n${YELLOW}[4/8]${NC} Instalando dependências do bot (pode demorar)..."
+echo -e "\n${YELLOW}[4/7]${NC} Instalando dependências do bot (pode demorar)..."
 
 if yarn install --network-timeout 180000 > /dev/null 2>&1; then
     echo -e "      ${GREEN}[OK]${NC} Dependências instaladas com Yarn"
@@ -61,7 +61,7 @@ fi
 # ============================================
 #           CRIAR SHARP FAKE
 # ============================================
-echo -e "\n${YELLOW}[5/8]${NC} Criando módulo Sharp fake (necessário para Termux)..."
+echo -e "\n${YELLOW}[5/7]${NC} Criando módulo Sharp fake (necessário para Termux)..."
 
 mkdir -p node_modules/sharp
 
@@ -76,44 +76,14 @@ EOF
 
 echo -e "      ${GREEN}[✓]${NC} Sharp fake criado com sucesso!"
 
-echo -e "\n${YELLOW}[6/8]${NC} Criando pastas..."
+echo -e "\n${YELLOW}[6/7]${NC} Criando pastas..."
 mkdir -p session temp Access
 chmod +x termux-setup.sh 2>/dev/null || true
 
 # ============================================
-#           CONFIGURAR NÚMERO DO WHATSAPP (INPUT CONFIÁVEL)
-# ============================================
-echo -e "\n${CYAN}════════════════════════════════════════${NC}"
-echo -e "${CYAN}   CONFIGURAÇÃO DO NÚMERO DO WHATSAPP${NC}"
-echo -e "${CYAN}════════════════════════════════════════${NC}\n"
-
-echo -e "${YELLOW}Digite o número do WhatsApp que vai conectar o bot:${NC}"
-echo -e "Exemplo: ${WHITE}5511999999999${NC} (sem + e sem espaços)"
-echo ""
-read -p "Número: " WHATSAPP_NUMBER
-
-if [ ! -z "$WHATSAPP_NUMBER" ]; then
-    # Salva no config.js
-    if [ -f setting/config.js ]; then
-        sed -i "s/global.myNumber = \['[^']*'\]/global.myNumber = ['$WHATSAPP_NUMBER']/" setting/config.js 2>/dev/null || true
-        # Se não existir a linha, adiciona
-        if ! grep -q "global.myNumber" setting/config.js; then
-            echo "global.myNumber = ['$WHATSAPP_NUMBER']" >> setting/config.js
-        fi
-    fi
-    
-    # Também salva como owner se quiser
-    echo "[\"$WHATSAPP_NUMBER\"]" > Access/Own.json
-    
-    echo -e "${GREEN}[✓]${NC} Número configurado: ${YELLOW}$WHATSAPP_NUMBER${NC}"
-else
-    echo -e "${YELLOW}[!]${NC} Número não informado. Você pode configurar depois."
-fi
-
-# ============================================
 #           PERMISSÃO DE ARMAZENAMENTO
 # ============================================
-echo -e "\n${BLUE}[INFO]${NC} Configurando permissão de armazenamento..."
+echo -e "\n${YELLOW}[7/7]${NC} Configurando permissão de armazenamento..."
 echo -e "${YELLOW}[DICA]${NC} Pode aparecer uma janela pedindo permissão. Toque em 'Permitir'."
 termux-setup-storage
 
@@ -136,6 +106,10 @@ echo ""
 echo -e "${WHITE}${BOLD}APÓS FECHAR O TERMUX:${NC}"
 echo -e "  ${CYAN}1.${NC} Abra o Termux novamente"
 echo -e "  ${CYAN}2.${NC} Rode: ${BLUE}tmux attach -t bot${NC}"
+echo ""
+echo -e "${WHITE}${BOLD}CONFIGURAR NÚMERO (opcional):${NC}"
+echo -e "  Edite o arquivo ${BLUE}setting/config.js${NC} e defina:"
+echo -e "  ${CYAN}global.myNumber = ['55SEU_NUMERO']${NC}"
 echo ""
 echo -e "${CYAN}Canal oficial: https://whatsapp.com/channel/0029VbArk5aBVJl7HTKxKw0j${NC}"
 echo ""
