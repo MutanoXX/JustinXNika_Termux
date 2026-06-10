@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # ============================================
 #   JUSTIN X NIKA - BOT WHATSAPP PARA TERMUX
-#   Versão 3.9.5 - Rápido e Estável (por MutanoX)
+#   Versão 4.3 - Sharp Fake Automático (por MutanoX)
 # ============================================
 
 set +e
@@ -34,22 +34,22 @@ echo -e "${GREEN}[INFO]${NC} Iniciando instalação do Justin X Nika...\n"
 #           INSTALAÇÃO
 # ============================================
 
-echo -e "${YELLOW}[1/6]${NC} Atualizando pacotes..."
+echo -e "${YELLOW}[1/8]${NC} Atualizando pacotes..."
 pkg update -y && pkg upgrade -y > /dev/null 2>&1
 
-echo -e "${YELLOW}[2/6]${NC} Instalando dependências do sistema..."
+echo -e "${YELLOW}[2/8]${NC} Instalando dependências do sistema..."
 pkg install -y nodejs ffmpeg git yarn python libwebp tmux build-essential clang > /dev/null 2>&1
 
-echo -e "${YELLOW}[3/6]${NC} Verificando Node.js..."
+echo -e "${YELLOW}[3/8]${NC} Verificando Node.js..."
 if ! command -v node &> /dev/null; then
     echo -e "${RED}[ERRO]${NC} Node.js não encontrado!"
     exit 1
 fi
 echo -e "      ${GREEN}Node.js:${NC} $(node --version)"
 
-echo -e "\n${YELLOW}[4/6]${NC} Instalando dependências do bot (pode demorar)..."
+echo -e "\n${YELLOW}[4/8]${NC} Instalando dependências do bot (pode demorar)..."
 
-if yarn install --network-timeout 120000 > /dev/null 2>&1; then
+if yarn install --network-timeout 180000 > /dev/null 2>&1; then
     echo -e "      ${GREEN}[OK]${NC} Dependências instaladas com Yarn"
 elif npm install --legacy-peer-deps > /dev/null 2>&1; then
     echo -e "      ${GREEN}[OK]${NC} Dependências instaladas com npm"
@@ -58,14 +58,25 @@ else
     exit 1
 fi
 
-echo -e "\n${YELLOW}[5/6]${NC} Tentando compilar Sharp..."
-if npm rebuild sharp --build-from-source > /dev/null 2>&1; then
-    echo -e "      ${GREEN}[OK]${NC} Sharp compilado com sucesso"
-else
-    echo -e "      ${YELLOW}[AVISO]${NC} Sharp pode precisar de compilação manual depois"
-fi
+# ============================================
+#           CRIAR SHARP FAKE (SOLUÇÃO PARA TERMUX)
+# ============================================
+echo -e "\n${YELLOW}[5/8]${NC} Criando módulo Sharp fake (necessário para Termux)..."
 
-echo -e "\n${YELLOW}[6/6]${NC} Criando pastas..."
+mkdir -p node_modules/sharp
+
+cat > node_modules/sharp/index.js << 'EOF'
+module.exports = {
+  resize: () => ({ toBuffer: async () => Buffer.from('') }),
+  png: () => ({ toBuffer: async () => Buffer.from('') }),
+  jpeg: () => ({ toBuffer: async () => Buffer.from('') }),
+  webp: () => ({ toBuffer: async () => Buffer.from('') }),
+};
+EOF
+
+echo -e "      ${GREEN}[✓]${NC} Sharp fake criado com sucesso!"
+
+echo -e "\n${YELLOW}[6/8]${NC} Criando pastas..."
 mkdir -p session temp Access
 chmod +x termux-setup.sh 2>/dev/null || true
 
