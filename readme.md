@@ -60,8 +60,8 @@ O **Justin X Nika** é um bot WhatsApp completo baseado em **@whiskeysockets/bai
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/MutanoXX/JustinXNika.git
-cd JustinXNika
+git clone https://github.com/MutanoXX/JustinXNika_Termux.git
+cd JustinXNika_Termux
 
 # 2. Execute o script de instalação
 bash termux-setup.sh
@@ -77,8 +77,8 @@ pkg update -y && pkg upgrade -y
 pkg install -y nodejs ffmpeg git yarn
 
 # Clonar o bot
-git clone https://github.com/MutanoXX/JustinXNika.git
-cd JustinXNika
+git clone https://github.com/MutanoXX/JustinXNika_Termux.git
+cd JustinXNika_Termux
 
 # Instalar dependências do bot
 yarn install
@@ -245,7 +245,7 @@ termux-setup-storage
 Para atualizar o bot:
 
 ```bash
-cd JustinXNika
+cd JustinXNika_Termux
 git pull
 yarn install
 ```
@@ -254,7 +254,7 @@ yarn install
 
 ## 📞 Suporte
 
-- **GitHub:** https://github.com/MutanoXX/JustinXNika
+- **GitHub:** https://github.com/MutanoXX/JustinXNika_Termux
 - **Dúvidas:** Abra uma issue no repositório
 
 ---
