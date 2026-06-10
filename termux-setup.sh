@@ -1,10 +1,10 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # ============================================
 #   JUSTIN X NIKA - BOT WHATSAPP PARA TERMUX
-#   Versão 3.3 - Otimizado por MutanoX (Sharp Fix)
+#   Versão 3.5 - Mais Seguro e Robusto (por MutanoX)
 # ============================================
 
-set -e
+set +e
 
 # Cores
 RED='\e[31m'
@@ -47,67 +47,71 @@ echo -e "${GREEN}[INFO]${NC} Iniciando instalação e configuração do Justin X
 # ============================================
 
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [1/9] Atualizando pacotes do Termux...${NC}"
+echo -e "${YELLOW}  [1/10] Atualizando pacotes do Termux...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
 pkg update -y && pkg upgrade -y
 
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [2/9] Instalando dependências do sistema...${NC}"
+echo -e "${YELLOW}  [2/10] Instalando dependências do sistema...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
 pkg install -y nodejs ffmpeg git yarn python libwebp libjpeg-turbo libpng python-pip tmux
 
-# Dependências extras para compilar sharp (importante!)
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [3/9] Instalando ferramentas de compilação...${NC}"
+echo -e "${YELLOW}  [3/10] Instalando ferramentas de compilação...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
 pkg install -y build-essential clang make cmake pkg-config
 
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [4/9] Verificando Node.js e Yarn...${NC}"
+echo -e "${YELLOW}  [4/10] Verificando Node.js e Yarn...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
 node --version || { echo -e "${RED}[ERRO]${NC} Node.js não encontrado!"; exit 1; }
 yarn --version || { echo -e "${RED}[ERRO]${NC} Yarn não encontrado!"; exit 1; }
 
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [5/9] Instalando dependências do bot...${NC}"
+echo -e "${YELLOW}  [5/10] Instalando dependências do bot...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
 echo -e "${BLUE}[INFO]${NC} Isso pode demorar 5-15 minutos..."
 
-# Tenta instalar normalmente primeiro
+INSTALL_SUCCESS=false
+
 if yarn install; then
     echo -e "${GREEN}[OK]${NC} Dependências instaladas com Yarn!"
+    INSTALL_SUCCESS=true
 else
     echo -e "${YELLOW}[AVISO]${NC} Yarn falhou, tentando com npm..."
     if npm install --legacy-peer-deps; then
         echo -e "${GREEN}[OK]${NC} Dependências instaladas com npm!"
-    else
-        echo -e "${RED}[ERRO]${NC} Falha na instalação das dependências."
-        exit 1
+        INSTALL_SUCCESS=true
     fi
+fi
+
+if [ "$INSTALL_SUCCESS" = false ]; then
+    echo -e "${RED}[ERRO]${NC} Falha na instalação das dependências."
+    exit 1
 fi
 
 # ============================================
 #           TRATAMENTO ESPECIAL DO SHARP
 # ============================================
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [6/9] Verificando Sharp (pode precisar de rebuild)...${NC}"
+echo -e "${YELLOW}  [6/10] Tentando compilar Sharp...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
-
-# Tenta fazer rebuild do sharp com build-from-source
-echo -e "${BLUE}[INFO]${NC} Tentando compilar Sharp do zero (isso pode demorar bastante)..."
 
 if npm rebuild sharp --build-from-source; then
     echo -e "${GREEN}[✓]${NC} Sharp compilado com sucesso!"
 else
-    echo -e "${YELLOW}[AVISO]${NC} Falha no rebuild do Sharp. O bot pode ter problemas com imagens."
-    echo -e "${YELLOW}[DICA]${NC} Se der erro depois, rode manualmente:"
+    echo -e "${YELLOW}[AVISO]${NC} Falha ao compilar Sharp. Rode manualmente depois se necessário:"
     echo -e "       ${CYAN}npm rebuild sharp --build-from-source${NC}"
 fi
 
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [7/9] Criando pastas e permissões...${NC}"
+echo -e "${YELLOW}  [7/10] Criando pastas necessárias...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
-mkdir -p session temp
+mkdir -p session temp Access
+
+echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
+echo -e "${YELLOW}  [8/10] Configurando permissões...${NC}"
+echo -e "${YELLOW}════════════════════════════════════════${NC}"
 chmod +x termux-setup.sh
 chmod +x connect.js 2>/dev/null || true
 termux-setup-storage
@@ -132,7 +136,9 @@ if [ "$CONFIG_OWNER" == "1" ]; then
     read -p "Número: " OWNER_NUMBER
     
     if [ ! -z "$OWNER_NUMBER" ]; then
-        sed -i "s/global.owner = \['[^']*'\]/global.owner = ['$OWNER_NUMBER']/" setting/config.js
+        if [ -f setting/config.js ]; then
+            sed -i "s/global.owner = \['[^']*'\]/global.owner = ['$OWNER_NUMBER']/" setting/config.js
+        fi
         echo "[\"$OWNER_NUMBER\"]" > Access/Own.json
         echo -e "${GREEN}[✓]${NC} Número configurado com sucesso: ${YELLOW}$OWNER_NUMBER${NC}"
     else
@@ -146,7 +152,7 @@ fi
 #              FINALIZAÇÃO
 # ============================================
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [8/9] Verificando FFmpeg...${NC}"
+echo -e "${YELLOW}  [9/10] Verificando FFmpeg...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
 ffmpeg -version | head -1 || echo -e "${YELLOW}[AVISO]${NC} FFmpeg pode precisar de reinstalação"
 
