@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # ============================================
 #   JUSTIN X NIKA - BOT WHATSAPP PARA TERMUX
-#   Versão 4.3 - Sharp Fake Automático (por MutanoX)
+#   Versão 4.4 - Sharp Fake + Número Confiável (por MutanoX)
 # ============================================
 
 set +e
@@ -59,7 +59,7 @@ else
 fi
 
 # ============================================
-#           CRIAR SHARP FAKE (SOLUÇÃO PARA TERMUX)
+#           CRIAR SHARP FAKE
 # ============================================
 echo -e "\n${YELLOW}[5/8]${NC} Criando módulo Sharp fake (necessário para Termux)..."
 
@@ -79,6 +79,36 @@ echo -e "      ${GREEN}[✓]${NC} Sharp fake criado com sucesso!"
 echo -e "\n${YELLOW}[6/8]${NC} Criando pastas..."
 mkdir -p session temp Access
 chmod +x termux-setup.sh 2>/dev/null || true
+
+# ============================================
+#           CONFIGURAR NÚMERO DO WHATSAPP (INPUT CONFIÁVEL)
+# ============================================
+echo -e "\n${CYAN}════════════════════════════════════════${NC}"
+echo -e "${CYAN}   CONFIGURAÇÃO DO NÚMERO DO WHATSAPP${NC}"
+echo -e "${CYAN}════════════════════════════════════════${NC}\n"
+
+echo -e "${YELLOW}Digite o número do WhatsApp que vai conectar o bot:${NC}"
+echo -e "Exemplo: ${WHITE}5511999999999${NC} (sem + e sem espaços)"
+echo ""
+read -p "Número: " WHATSAPP_NUMBER
+
+if [ ! -z "$WHATSAPP_NUMBER" ]; then
+    # Salva no config.js
+    if [ -f setting/config.js ]; then
+        sed -i "s/global.myNumber = \['[^']*'\]/global.myNumber = ['$WHATSAPP_NUMBER']/" setting/config.js 2>/dev/null || true
+        # Se não existir a linha, adiciona
+        if ! grep -q "global.myNumber" setting/config.js; then
+            echo "global.myNumber = ['$WHATSAPP_NUMBER']" >> setting/config.js
+        fi
+    fi
+    
+    # Também salva como owner se quiser
+    echo "[\"$WHATSAPP_NUMBER\"]" > Access/Own.json
+    
+    echo -e "${GREEN}[✓]${NC} Número configurado: ${YELLOW}$WHATSAPP_NUMBER${NC}"
+else
+    echo -e "${YELLOW}[!]${NC} Número não informado. Você pode configurar depois."
+fi
 
 # ============================================
 #           PERMISSÃO DE ARMAZENAMENTO
