@@ -1,22 +1,23 @@
 # 🤖 Justin X Nika - Bot WhatsApp para Termux
 
-**Versão:** 3.0  
-**Autor:** Justin X Nika  
-**Adaptado para Termux em:** 10 de Junho de 2026
+> **Versão:** 3.2 (Termux Optimized)  
+> **Autor:** Justin X Nika  
+> **Adaptado para Termux por:** MutanoX  
+> **Última atualização:** 10 de Junho de 2026
 
 ---
 
 ## 📋 Índice
 
-1. [Sobre o Bot](#sobre-o-bot)
-2. [Requisitos](#requisitos)
-3. [Instalação no Termux](#instalação-no-termux)
-4. [Comandos de Uso](#comandos-de-uso)
-5. [Configuração](#configuração)
-6. [Estrutura de Arquivos](#estrutura-de-arquivos)
-7. [Comandos do Bot](#comandos-do-bot)
-8. [Solução de Problemas](#solução-de-problemas)
-9. [Atualizações](#atualizações)
+| Seção | Descrição |
+|-------|-----------|
+| [Sobre o Bot](#sobre-o-bot) | Recursos principais |
+| [Requisitos](#requisitos) | O que você precisa |
+| [Instalação Rápida](#instalação-rápida) | Comando único |
+| [Configuração Inicial](#configuração-inicial) | Número do dono |
+| [Comandos Essenciais](#comandos-essenciais) | Como usar |
+| [Problemas Comuns](#problemas-comuns--soluções) | Erros e soluções |
+| [Atualizações](#atualizações) | Como manter atualizado |
 
 ---
 
@@ -24,225 +25,184 @@
 
 O **Justin X Nika** é um bot WhatsApp completo baseado em **@whiskeysockets/baileys** (multi-device).
 
-### Principais Recursos:
-- ✅ Suporte a **múltiplos dispositivos**
-- ✅ Download de **YouTube, Instagram, TikTok, Facebook**
-- ✅ Comandos de **grupo** (kick, promote, demote, etc.)
-- ✅ **Sticker** e **meme** maker
-- ✅ **OCR** (reconhecimento de texto em imagens)
-- ✅ **TTS** (texto para voz)
-- ✅ Sistema de **Premium** e **Owners**
-- ✅ Comandos de **administração** de grupo
-- ✅ **Auto-resposta** e **boas-vindas**
-- ✅ Suporte a **áudio** e **vídeo**
+### ✨ Principais Recursos
+
+| Categoria | Recursos |
+|-----------|----------|
+| **Downloads** | YouTube, Instagram, TikTok, Facebook |
+| **Grupo** | Kick, Promote, Demote, Tagall, Welcome |
+| **Mídia** | Sticker, OCR, TTS, Meme |
+| **Admin** | Owners, Premium, Configurações |
+| **Outros** | Auto-resposta, Boas-vindas, Áudio/Vídeo |
 
 ---
 
 ## 🛠 Requisitos
 
-### No Termux (Android):
+### Mínimo
 - Termux atualizado
 - Node.js ≥ 18
 - FFmpeg
 - Yarn ou npm
 - Git
-- Armazenamento (para salvar sessão)
 
-### Recomendado:
+### Recomendado
 - Pelo menos **2GB de RAM** livre
 - Conexão estável com internet
 
 ---
 
-## 🚀 Instalação no Termux
+## 🚀 Instalação Rápida
 
-### Método 1: Instalação Automática (Recomendado)
+### Método Recomendado (1 comando)
 
 ```bash
-# 1. Clone o repositório
-git clone https://github.com/MutanoXX/JustinXNika_Termux.git
-cd JustinXNika_Termux
-
-# 2. Execute o script de instalação
+pkg update -y && pkg install -y nodejs ffmpeg git yarn python libwebp tmux && \
+git clone https://github.com/MutanoXX/JustinXNika_Termux.git && \
+cd JustinXNika_Termux && \
 bash termux-setup.sh
 ```
 
-### Método 2: Instalação Manual
+### Passo a Passo Manual
 
 ```bash
-# Atualizar pacotes
+# 1. Atualizar Termux
 pkg update -y && pkg upgrade -y
 
-# Instalar dependências
-pkg install -y nodejs ffmpeg git yarn
+# 2. Instalar dependências
+pkg install -y nodejs ffmpeg git yarn python libwebp tmux
 
-# Clonar o bot
+# 3. Clonar repositório
 git clone https://github.com/MutanoXX/JustinXNika_Termux.git
 cd JustinXNika_Termux
 
-# Instalar dependências do bot
-yarn install
-
-# Dar permissão de armazenamento
-termux-setup-storage
+# 4. Executar script de instalação
+bash termux-setup.sh
 ```
 
 ---
 
-## ▶️ Comandos de Uso
+## ⚙️ Configuração Inicial
+
+Durante a instalação o script vai perguntar:
+
+```
+════════════════════════════════════════
+     CONFIGURAÇÃO DO DONO DO BOT
+════════════════════════════════════════
+
+Deseja configurar o número do dono agora?
+  [1] Sim   → Inserir meu número
+  [2] Não   → Usar configuração padrão
+```
+
+### Se escolher **Sim**:
+- Digite seu número (ex: `5511999999999`)
+- O script atualiza automaticamente:
+  - `setting/config.js`
+  - `Access/Own.json`
+
+### Se escolher **Não**:
+- Mantém a configuração padrão
+
+---
+
+## ▶️ Comandos Essenciais
 
 ### Iniciar o Bot
 
 ```bash
-# Opção 1 (recomendada)
+# Forma simples
 yarn start
 
-# Opção 2
+# Ou
 node connect.js
+```
+
+### Recomendado (tmux)
+
+```bash
+# Criar sessão
+tmux new -s bot
+
+# Rodar o bot
+node connect.js
+
+# Minimizar (deixar rodando)
+# Pressione: Ctrl + B → D
+
+# Voltar para a sessão
+tmux attach -t bot
 ```
 
 ### Parar o Bot
+Pressione `CTRL + C`
 
-Pressione `CTRL + C` no terminal.
+---
 
-### Reiniciar após atualização
+## ❗ Problemas Comuns + Soluções
 
+### 1. Erro do Sharp (mais comum)
+
+```
+npm error sharp: Prebuilt libvips binaries are not yet available for android-arm64v8
+```
+
+**Solução:**
 ```bash
-yarn install
-node connect.js
+npm rebuild sharp --build-from-source
 ```
 
----
-
-## ⚙️ Configuração
-
-### Arquivo `setting/config.js`
-
-```javascript
-global.connect = true
-global.publicX = true 
-global.owner = ['6288103781881']   // Números dos donos (sem +)
-global.prefa = ['','!','.',',','🐤','🗿']  // Prefixos aceitos
-```
-
-### Arquivos de Acesso
-
-- **`Access/Own.json`** → Lista de owners (números)
-- **`Access/Prem.json`** → Lista de usuários premium
-
-**Exemplo de Own.json:**
-```json
-["6288103768282", "5511999999999"]
-```
-
----
-
-## 📁 Estrutura de Arquivos
+### 2. Erro de FFmpeg
 
 ```
-JustinXNika/
-├── connect.js          # Arquivo principal de conexão
-├── justin.js           # Lógica principal do bot (obfuscado)
-├── package.json        # Dependências
-├── termux-setup.sh     # Script de instalação automática
-├── arquivo.md          # Este arquivo de documentação
-├── Access/
-│   ├── Own.json        # Owners do bot
-│   └── Prem.json       # Usuários premium
-├── System/
-│   ├── x1.js           # Funções auxiliares
-│   ├── justin.jpg
-│   └── Thumb.jpg
-├── setting/
-│   └── config.js       # Configurações globais
-└── session/            # Pasta criada automaticamente (sessão)
+ffmpeg not found / spawn ffmpeg ENOENT
 ```
 
----
-
-## 🤖 Comandos do Bot
-
-### Comandos Gerais
-
-| Comando | Descrição |
-|---------|-----------|
-| `!menu` | Mostra o menu principal |
-| `!help` | Ajuda |
-| `!ping` | Testa latência |
-| `!owner` | Contato dos donos |
-
-### Comandos de Download
-
-| Comando | Descrição |
-|---------|-----------|
-| `!yt <link>` | Download YouTube |
-| `!ig <link>` | Download Instagram |
-| `!tt <link>` | Download TikTok |
-| `!fb <link>` | Download Facebook |
-
-### Comandos de Grupo (Admin)
-
-| Comando | Descrição |
-|---------|-----------|
-| `!kick @user` | Expulsar membro |
-| `!add @user` | Adicionar membro |
-| `!promote @user` | Promover a admin |
-| `!demote @user` | Rebaixar admin |
-| `!tagall` | Marcar todos |
-| `!welcome on/off` | Ativar/desativar boas-vindas |
-
-### Comandos de Mídia
-
-| Comando | Descrição |
-|---------|-----------|
-| `!sticker` | Criar sticker (responda imagem) |
-| `!toimg` | Converter sticker em imagem |
-| `!tts <texto>` | Texto para voz |
-| `!ocr` | Extrair texto de imagem |
-
----
-
-## ❗ Solução de Problemas
-
-### Erro: "Cannot find module"
-
-```bash
-yarn install
-```
-
-### Bot não responde após scan do QR
-
-- Verifique se o número está correto em `config.js`
-- Delete a pasta `session` e escaneie novamente
-
-### FFmpeg não encontrado
-
+**Solução:**
 ```bash
 pkg install ffmpeg -y
 ```
 
-### Bot cai após alguns minutos
+### 3. Bot não gera QR Code
 
-- Use um **screen** ou **tmux**:
+**Solução:**
 ```bash
-pkg install tmux
+rm -rf session
+node connect.js
+```
+
+### 4. Bot cai após alguns minutos
+
+**Solução (usar tmux):**
+```bash
+pkg install tmux -y
 tmux new -s bot
 node connect.js
 ```
-Para voltar: `tmux attach -t bot`
 
-### Erro de permissão
+### 5. Erro de permissão
 
+**Solução:**
 ```bash
 chmod +x termux-setup.sh
 termux-setup-storage
 ```
 
+### 6. Erro de libwebp
+
+```
+libwebp.so.7: cannot open shared object file
+```
+
+**Solução:**
+```bash
+pkg install libwebp -y
+```
+
 ---
 
 ## 🔄 Atualizações
-
-Para atualizar o bot:
 
 ```bash
 cd JustinXNika_Termux
@@ -254,9 +214,16 @@ yarn install
 
 ## 📞 Suporte
 
-- **GitHub:** https://github.com/MutanoXX/JustinXNika_Termux
-- **Dúvidas:** Abra uma issue no repositório
+- **Repositório Oficial:** https://github.com/MutanoXX/JustinXNika_Termux
+- **Canal WhatsApp:** https://whatsapp.com/channel/0029VbArk5aBVJl7HTKxKw0j
 
 ---
 
-**Feito com ❤️ por MutanoXX - Adaptado para Termux**
+## 👤 Créditos
+
+**Adaptado para Termux por:** MutanoX  
+**Repositório:** https://github.com/MutanoXX/JustinXNika_Termux
+
+---
+
+**Feito com ❤️ por MutanoX**
