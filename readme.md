@@ -77,8 +77,8 @@ pkg update -y && pkg upgrade -y
 pkg install -y nodejs ffmpeg git yarn
 
 # Clonar o bot
-git clone https://github.com/MutanoXX/JustinXNika.git
-cd JustinXNika
+git clone https://github.com/MutanoXX/JustinXNika_Termux
+cd JustinXNika_Termux
 
 # Instalar dependências do bot
 yarn install
