@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # ============================================
-# Justin X Nika - Bot WhatsApp para Termux
-# Script de Instalação + Configuração Inicial (v3.2)
+#   JUSTIN X NIKA - BOT WHATSAPP PARA TERMUX
+#   Versão 3.2 - Otimizado por MutanoX
 # ============================================
 
 set -e
@@ -12,62 +12,88 @@ GREEN='\e[32m'
 YELLOW='\e[33m'
 BLUE='\e[34m'
 CYAN='\e[36m'
+MAGENTA='\e[35m'
+WHITE='\e[97m'
+BOLD='\e[1m'
 NC='\e[0m'
 
 clear
-echo -e "${CYAN}=========================================="
-echo -e "   JUSTIN X NIKA - CONFIGURAÇÃO TERMUX"
-echo -e "==========================================${NC}\n"
 
-echo -e "${GREEN}[INFO]${NC} Iniciando instalação e configuração do bot..."
+# ============================================
+#           CABEÇALHO DECORADO
+# ============================================
+echo -e "${CYAN}"
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║                                                              ║"
+echo "║     ██████╗  ██████╗ ████████╗    ██╗  ██╗    ███╗   ██╗    ║"
+echo "║     ██╔══██╗██╔═══██╗╚══██╔══╝    ╚██╗██╔╝    ████╗  ██║    ║"
+echo "║     ██████╔╝██║   ██║   ██║        ╚███╔╝     ██╔██╗ ██║    ║"
+echo "║     ██╔══██╗██║   ██║   ██║        ██╔██╗     ██║╚██╗██║    ║"
+echo "║     ██████╔╝╚██████╔╝   ██║       ██╔╝ ██╗    ██║ ╚████║    ║"
+echo "║     ╚═════╝  ╚═════╝    ╚═╝       ╚═╝  ╚═╝    ╚═╝  ╚═══╝    ║"
+echo "║                                                              ║"
+echo "║           🤖 BOT WHATSAPP MULTI-DEVICE 🤖                    ║"
+echo "║                                                              ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo -e "${NC}"
 
-# 1. Atualizar pacotes
-echo -e "\n${YELLOW}[1/12]${NC} Atualizando pacotes..."
+echo -e "${MAGENTA}${BOLD}        Adaptado para Termux por MutanoX${NC}"
+echo -e "${CYAN}              https://github.com/MutanoXX${NC}\n"
+
+echo -e "${GREEN}[INFO]${NC} Iniciando instalação e configuração do Justin X Nika..."
+
+# ============================================
+#           INSTALAÇÃO DAS DEPENDÊNCIAS
+# ============================================
+
+echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
+echo -e "${YELLOW}  [1/8] Atualizando pacotes do Termux...${NC}"
+echo -e "${YELLOW}════════════════════════════════════════${NC}"
 pkg update -y && pkg upgrade -y
 
-# 2. Instalar dependências
-echo -e "\n${YELLOW}[2/12]${NC} Instalando dependências do sistema..."
+echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
+echo -e "${YELLOW}  [2/8] Instalando dependências do sistema...${NC}"
+echo -e "${YELLOW}════════════════════════════════════════${NC}"
 pkg install -y nodejs ffmpeg git yarn python libwebp libjpeg-turbo libpng python-pip tmux
 
-# 3. Verificar instalação
-echo -e "\n${YELLOW}[3/12]${NC} Verificando Node.js e Yarn..."
+echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
+echo -e "${YELLOW}  [3/8] Verificando Node.js e Yarn...${NC}"
+echo -e "${YELLOW}════════════════════════════════════════${NC}"
 node --version || { echo -e "${RED}[ERRO]${NC} Node.js não encontrado!"; exit 1; }
 yarn --version || { echo -e "${RED}[ERRO]${NC} Yarn não encontrado!"; exit 1; }
 
-# 4. Instalar dependências do bot
-echo -e "\n${YELLOW}[4/12]${NC} Instalando dependências do bot (pode demorar)..."
+echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
+echo -e "${YELLOW}  [4/8] Instalando dependências do bot...${NC}"
+echo -e "${YELLOW}════════════════════════════════════════${NC}"
+echo -e "${BLUE}[INFO]${NC} Isso pode demorar alguns minutos..."
 npm config set python python
 if yarn install; then
-    echo -e "${GREEN}[OK]${NC} Dependências instaladas com Yarn"
+    echo -e "${GREEN}[OK]${NC} Dependências instaladas com sucesso!"
 else
     echo -e "${YELLOW}[AVISO]${NC} Tentando com npm..."
     npm install --legacy-peer-deps
 fi
 
-# 5. Criar pastas
-echo -e "\n${YELLOW}[5/12]${NC} Criando pastas..."
+echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
+echo -e "${YELLOW}  [5/8] Criando pastas e permissões...${NC}"
+echo -e "${YELLOW}════════════════════════════════════════${NC}"
 mkdir -p session temp
-
-# 6. Permissões
 chmod +x termux-setup.sh
 chmod +x connect.js 2>/dev/null || true
-
-# 7. Armazenamento
-echo -e "\n${YELLOW}[6/12]${NC} Configurando armazenamento..."
 termux-setup-storage
 
 # ============================================
-# CONFIGURAÇÃO INTERATIVA DO OWNER
+#       CONFIGURAÇÃO INTERATIVA DO OWNER
 # ============================================
-echo -e "\n${CYAN}=========================================="
-echo -e "   CONFIGURAÇÃO INICIAL DO BOT"
-echo -e "==========================================${NC}\n"
+echo -e "\n${CYAN}════════════════════════════════════════${NC}"
+echo -e "${CYAN}       CONFIGURAÇÃO DO DONO DO BOT${NC}"
+echo -e "${CYAN}════════════════════════════════════════${NC}\n"
 
-echo -e "${YELLOW}Deseja configurar o número do dono do bot agora?${NC}"
-echo -e "  ${GREEN}[1] Sim${NC}  - Vou inserir meu número"
-echo -e "  ${RED}[2] Não${NC}  - Manter configuração padrão"
+echo -e "${YELLOW}Deseja configurar o número do dono agora?${NC}"
+echo -e "  ${GREEN}[1] Sim${NC}   → Inserir meu número"
+echo -e "  ${RED}[2] Não${NC}   → Usar configuração padrão"
 echo ""
-read -p "Escolha uma opção (1 ou 2): " CONFIG_OWNER
+read -p "Escolha (1 ou 2): " CONFIG_OWNER
 
 if [ "$CONFIG_OWNER" == "1" ]; then
     echo ""
@@ -76,50 +102,41 @@ if [ "$CONFIG_OWNER" == "1" ]; then
     read -p "Número: " OWNER_NUMBER
     
     if [ ! -z "$OWNER_NUMBER" ]; then
-        # Atualiza config.js
         sed -i "s/global.owner = \['[^']*'\]/global.owner = ['$OWNER_NUMBER']/" setting/config.js
-        echo -e "${GREEN}[OK]${NC} Número do dono configurado: $OWNER_NUMBER"
-        
-        # Atualiza Own.json
         echo "[\"$OWNER_NUMBER\"]" > Access/Own.json
-        echo -e "${GREEN}[OK]${NC} Arquivo Access/Own.json atualizado"
+        echo -e "${GREEN}[✓]${NC} Número configurado com sucesso: ${YELLOW}$OWNER_NUMBER${NC}"
     else
-        echo -e "${YELLOW}[AVISO]${NC} Número vazio. Mantendo configuração padrão."
+        echo -e "${YELLOW}[!]${NC} Número vazio. Mantendo padrão."
     fi
 else
-    echo -e "${YELLOW}[INFO]${NC} Configuração do dono mantida como padrão."
+    echo -e "${YELLOW}[!]${NC} Mantendo configuração padrão."
 fi
 
-echo ""
-
-# 8. Verificar FFmpeg
-echo -e "${YELLOW}[7/12]${NC} Verificando FFmpeg..."
+# ============================================
+#              FINALIZAÇÃO
+# ============================================
+echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
+echo -e "${YELLOW}  [6/8] Verificando FFmpeg...${NC}"
+echo -e "${YELLOW}════════════════════════════════════════${NC}"
 ffmpeg -version | head -1 || echo -e "${YELLOW}[AVISO]${NC} FFmpeg pode precisar de reinstalação"
 
-# 9. Finalização
-echo -e "\n${YELLOW}[8/12]${NC} Finalizando instalação..."
+echo -e "\n${GREEN}════════════════════════════════════════${NC}"
+echo -e "${GREEN}     ✓ INSTALAÇÃO CONCLUÍDA COM SUCESSO!${NC}"
+echo -e "${GREEN}════════════════════════════════════════${NC}\n"
 
+echo -e "${WHITE}${BOLD}COMO INICIAR O BOT:${NC}"
+echo -e "  ${CYAN}▶${NC}  ${BLUE}yarn start${NC}"
+echo -e "  ${CYAN}▶${NC}  ${BLUE}node connect.js${NC}"
 echo ""
-echo -e "${GREEN}=========================================="
-echo -e "     INSTALAÇÃO CONCLUÍDA!"
-echo -e "==========================================${NC}"
+echo -e "${WHITE}${BOLD}RECOMENDADO (usar tmux):${NC}"
+echo -e "  ${CYAN}1.${NC} tmux new -s bot"
+echo -e "  ${CYAN}2.${NC} node connect.js"
+echo -e "  ${CYAN}3.${NC} (Ctrl+B → D para minimizar)"
 echo ""
-
-echo -e "${GREEN}Próximos passos:${NC}"
+echo -e "${WHITE}${BOLD}CANAL OFICIAL DO BOT:${NC}"
+echo -e "  ${CYAN}https://whatsapp.com/channel/0029VbArk5aBVJl7HTKxKw0j${NC}"
 echo ""
-echo -e "  ${YELLOW}1. Iniciar o bot:${NC}"
-echo -e "     ${BLUE}yarn start${NC}   ou   ${BLUE}node connect.js${NC}"
+echo -e "${MAGENTA}${BOLD}Adaptado para Termux por MutanoX${NC}"
+echo -e "${CYAN}https://github.com/MutanoXX/JustinXNika_Termux${NC}"
 echo ""
-echo -e "  ${YELLOW}2. Escanear o QR Code${NC} com seu WhatsApp"
-echo ""
-echo -e "  ${YELLOW}3. Após conectar, entre manualmente no canal oficial:${NC}"
-echo -e "     ${CYAN}https://whatsapp.com/channel/0029VbArk5aBVJl7HTKxKw0j${NC}"
-echo ""
-
-echo -e "${YELLOW}Dicas:${NC}"
-echo -e "  • Use tmux para manter o bot rodando em background"
-echo -e "  • Se der erro de Sharp: ${BLUE}npm rebuild sharp${NC}"
-echo ""
-
-echo -e "${GREEN}==========================================${NC}"
-echo ""
+echo -e "${GREEN}════════════════════════════════════════${NC}"
