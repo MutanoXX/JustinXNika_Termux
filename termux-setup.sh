@@ -66,7 +66,9 @@ echo -e "\n${YELLOW}════════════════════
 echo -e "${YELLOW}  [4/8] Instalando dependências do bot...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
 echo -e "${BLUE}[INFO]${NC} Isso pode demorar alguns minutos..."
-npm config set python python
+
+# REMOVIDO: npm config set python python (não é mais suportado)
+
 if yarn install; then
     echo -e "${GREEN}[OK]${NC} Dependências instaladas com sucesso!"
 else
