@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # ============================================
 #   JUSTIN X NIKA - BOT WHATSAPP PARA TERMUX
-#   Versão 3.7 - Instalação Mais Robusta (por MutanoX)
+#   Versão 3.8 - Clean & Professional (por MutanoX)
 # ============================================
 
 set +e
@@ -21,124 +21,101 @@ clear
 
 echo -e "${CYAN}"
 echo "╔══════════════════════════════════════════════════════════════╗"
-echo "║     ██████╗  ██████╗ ████████╗    ██╗  ██╗    ███╗   ██╗    ║"
-echo "║           🤖 BOT WHATSAPP MULTI-DEVICE 🤖                    ║"
+echo "║                                                              ║"
+echo "║           🤖  JUSTIN X NIKA - WHATSAPP BOT  🤖               ║"
+echo "║                                                              ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
 echo -e "${NC}"
-echo -e "${MAGENTA}${BOLD}        Adaptado para Termux por MutanoX${NC}\n"
 
-echo -e "${GREEN}[INFO]${NC} Iniciando instalação do Justin X Nika..."
+echo -e "${MAGENTA}${BOLD}           Adaptado para Termux por MutanoX${NC}"
+echo -e "${CYAN}         https://github.com/MutanoXX/JustinXNika_Termux${NC}\n"
+
+echo -e "${GREEN}[INFO]${NC} Iniciando instalação do Justin X Nika...\n"
 
 # ============================================
-#           INSTALAÇÃO DAS DEPENDÊNCIAS
+#           INSTALAÇÃO
 # ============================================
 
-echo -e "\n${YELLOW}[1/9]${NC} Atualizando pacotes..."
-pkg update -y && pkg upgrade -y
+echo -e "${YELLOW}[1/7]${NC} Atualizando pacotes..."
+pkg update -y && pkg upgrade -y > /dev/null 2>&1
 
-echo -e "\n${YELLOW}[2/9]${NC} Instalando dependências do sistema..."
-pkg install -y nodejs ffmpeg git yarn python libwebp tmux build-essential clang
+echo -e "${YELLOW}[2/7]${NC} Instalando dependências do sistema..."
+pkg install -y nodejs ffmpeg git yarn python libwebp tmux build-essential clang > /dev/null 2>&1
 
-echo -e "\n${YELLOW}[3/9]${NC} Verificando Node.js..."
+echo -e "${YELLOW}[3/7]${NC} Verificando Node.js..."
 if ! command -v node &> /dev/null; then
     echo -e "${RED}[ERRO]${NC} Node.js não encontrado!"
     exit 1
 fi
-echo -e "${GREEN}[OK]${NC} Node.js: $(node --version)"
+echo -e "      ${GREEN}Node.js:${NC} $(node --version)"
 
-# ============================================
-#     INSTALAÇÃO DAS DEPENDÊNCIAS DO BOT
-# ============================================
-echo -e "\n${YELLOW}[4/9]${NC} Instalando dependências do bot (pode demorar 5-15 min)..."
+echo -e "\n${YELLOW}[4/7]${NC} Instalando dependências do bot (pode demorar)..."
 
-DEPS_INSTALLED=false
-
-# Tenta com Yarn primeiro
-echo -e "${BLUE}[INFO]${NC} Tentando com Yarn..."
-if yarn install --network-timeout 100000 2>&1; then
-    echo -e "${GREEN}[✓]${NC} Dependências instaladas com Yarn!"
-    DEPS_INSTALLED=true
+if yarn install --network-timeout 120000 > /dev/null 2>&1; then
+    echo -e "      ${GREEN}[OK]${NC} Dependências instaladas com Yarn"
+elif npm install --legacy-peer-deps > /dev/null 2>&1; then
+    echo -e "      ${GREEN}[OK]${NC} Dependências instaladas com npm"
 else
-    echo -e "${YELLOW}[AVISO]${NC} Yarn falhou. Tentando com npm..."
-    
-    # Tenta com npm
-    if npm install --legacy-peer-deps 2>&1; then
-        echo -e "${GREEN}[✓]${NC} Dependências instaladas com npm!"
-        DEPS_INSTALLED=true
-    else
-        echo -e "${RED}[ERRO]${NC} Falha ao instalar dependências."
-        echo -e "${YELLOW}[DICA]${NC} Tente manualmente:"
-        echo -e "       ${CYAN}cd ~/JustinXNika_Termux && yarn install${NC}"
-        exit 1
-    fi
+    echo -e "${RED}[ERRO]${NC} Falha na instalação das dependências."
+    exit 1
 fi
 
-# ============================================
-#           TRATAMENTO DO SHARP
-# ============================================
-echo -e "\n${YELLOW}[5/9]${NC} Tentando compilar Sharp..."
-
-if npm rebuild sharp --build-from-source 2>&1; then
-    echo -e "${GREEN}[✓]${NC} Sharp compilado com sucesso!"
+echo -e "\n${YELLOW}[5/7]${NC} Tentando compilar Sharp..."
+if npm rebuild sharp --build-from-source > /dev/null 2>&1; then
+    echo -e "      ${GREEN}[OK]${NC} Sharp compilado com sucesso"
 else
-    echo -e "${YELLOW}[AVISO]${NC} Sharp pode precisar de compilação manual depois."
-    echo -e "${YELLOW}[DICA]${NC} Rode: ${CYAN}npm rebuild sharp --build-from-source${NC}"
+    echo -e "      ${YELLOW}[AVISO]${NC} Sharp pode precisar de compilação manual depois"
 fi
 
-# ============================================
-#           CRIAR PASTAS E PERMISSÕES
-# ============================================
-echo -e "\n${YELLOW}[6/9]${NC} Criando pastas..."
+echo -e "\n${YELLOW}[6/7]${NC} Criando pastas e permissões..."
 mkdir -p session temp Access
-
-echo -e "\n${YELLOW}[7/9]${NC} Configurando permissões..."
 chmod +x termux-setup.sh 2>/dev/null || true
-termux-setup-storage
+termux-setup-storage > /dev/null 2>&1
 
-# ============================================
-#       CONFIGURAÇÃO DO DONO (OPCIONAL)
-# ============================================
-echo -e "\n${CYAN}════════════════════════════════════════${NC}"
-echo -e "${CYAN}   CONFIGURAÇÃO DO DONO (OPCIONAL)${NC}"
-echo -e "${CYAN}════════════════════════════════════════${NC}\n"
-
-echo -e "${YELLOW}Deseja configurar o número do dono agora?${NC}"
-echo -e "  ${GREEN}[1] Sim${NC}"
-echo -e "  ${RED}[2] Não${NC}"
-echo ""
-read -p "Escolha: " CONFIG_OWNER
-
-if [ "$CONFIG_OWNER" == "1" ]; then
-    echo ""
-    read -p "Digite seu número (ex: 5511999999999): " OWNER_NUMBER
-    
-    if [ ! -z "$OWNER_NUMBER" ]; then
-        if [ -f setting/config.js ]; then
-            sed -i "s/global.owner = \['[^']*'\]/global.owner = ['$OWNER_NUMBER']/" setting/config.js 2>/dev/null || true
-        fi
-        echo "[\"$OWNER_NUMBER\"]" > Access/Own.json
-        echo -e "${GREEN}[✓]${NC} Número salvo: $OWNER_NUMBER"
-    fi
+echo -e "\n${YELLOW}[7/7]${NC} Verificando FFmpeg..."
+if command -v ffmpeg &> /dev/null; then
+    echo -e "      ${GREEN}[OK]${NC} FFmpeg encontrado"
+else
+    echo -e "      ${YELLOW}[AVISO]${NC} FFmpeg não encontrado"
 fi
 
 # ============================================
-#              FINALIZAÇÃO
+#           FINALIZAÇÃO
 # ============================================
-echo -e "\n${YELLOW}[8/9]${NC} Verificando FFmpeg..."
-ffmpeg -version | head -1 || echo -e "${YELLOW}[AVISO]${NC} FFmpeg não encontrado"
-
 echo -e "\n${GREEN}════════════════════════════════════════${NC}"
 echo -e "${GREEN}     ✓ INSTALAÇÃO CONCLUÍDA COM SUCESSO!${NC}"
 echo -e "${GREEN}════════════════════════════════════════${NC}\n"
 
-echo -e "${WHITE}${BOLD}Para iniciar o bot:${NC}"
-echo -e "  ${BLUE}yarn start${NC}   ou   ${BLUE}node connect.js${NC}"
+echo -e "${WHITE}${BOLD}COMO INICIAR O BOT:${NC}"
+echo -e "  ${CYAN}▶${NC}  ${BLUE}yarn start${NC}"
+echo -e "  ${CYAN}▶${NC}  ${BLUE}node connect.js${NC}"
 echo ""
-echo -e "${WHITE}${BOLD}Recomendado (tmux):${NC}"
-echo -e "  tmux new -s bot"
-echo -e "  node connect.js"
+echo -e "${WHITE}${BOLD}RECOMENDADO (tmux):${NC}"
+echo -e "  ${CYAN}1.${NC} tmux new -s bot"
+echo -e "  ${CYAN}2.${NC} node connect.js"
+echo -e "  ${CYAN}3.${NC} (Ctrl+B → D para minimizar)"
+echo ""
+echo -e "${WHITE}${BOLD}APÓS FECHAR O TERMUX:${NC}"
+echo -e "  ${CYAN}1.${NC} Abra o Termux novamente"
+echo -e "  ${CYAN}2.${NC} Rode: ${BLUE}tmux attach -t bot${NC}"
+echo -e "  ${CYAN}3.${NC} O bot voltará a funcionar"
 echo ""
 echo -e "${CYAN}Canal oficial: https://whatsapp.com/channel/0029VbArk5aBVJl7HTKxKw0j${NC}"
 echo ""
-echo -e "${MAGENTA}Adaptado por MutanoX${NC}"
+echo -e "${MAGENTA}${BOLD}Adaptado para Termux por MutanoX${NC}"
 echo -e "${GREEN}════════════════════════════════════════${NC}"
+
+# ============================================
+#           INICIAR O BOT AGORA?
+# ============================================
+echo ""
+read -p "Deseja iniciar o bot agora? (s/n): " START_NOW
+
+if [[ "$START_NOW" =~ ^[Ss]$ ]]; then
+    echo -e "\n${GREEN}[INFO]${NC} Iniciando o bot..."
+    echo -e "${YELLOW}[DICA]${NC} Para minimizar use: Ctrl+B → D"
+    echo -e "${YELLOW}[DICA]${NC} Para voltar use: tmux attach -t bot"
+    echo ""
+    sleep 2
+    yarn start
+fi
