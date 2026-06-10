@@ -70,11 +70,11 @@ mkdir -p session temp Access
 chmod +x termux-setup.sh 2>/dev/null || true
 
 # ============================================
-#           PERMISSÃO DE ARMAZENAMENTO (EM BACKGROUND)
+#           PERMISSÃO DE ARMAZENAMENTO
 # ============================================
 echo -e "\n${BLUE}[INFO]${NC} Configurando permissão de armazenamento..."
 echo -e "${YELLOW}[DICA]${NC} Pode aparecer uma janela pedindo permissão. Toque em 'Permitir'."
-termux-setup-storage > /dev/null 2>&1 &
+termux-setup-storage
 
 # ============================================
 #           FINALIZAÇÃO
