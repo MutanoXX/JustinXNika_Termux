@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # ============================================
 #   JUSTIN X NIKA - BOT WHATSAPP PARA TERMUX
-#   Versão 3.8 - Clean & Professional (por MutanoX)
+#   Versão 3.9.5 - Rápido e Estável (por MutanoX)
 # ============================================
 
 set +e
@@ -21,9 +21,7 @@ clear
 
 echo -e "${CYAN}"
 echo "╔══════════════════════════════════════════════════════════════╗"
-echo "║                                                              ║"
 echo "║           🤖  JUSTIN X NIKA - WHATSAPP BOT  🤖               ║"
-echo "║                                                              ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
 echo -e "${NC}"
 
@@ -36,20 +34,20 @@ echo -e "${GREEN}[INFO]${NC} Iniciando instalação do Justin X Nika...\n"
 #           INSTALAÇÃO
 # ============================================
 
-echo -e "${YELLOW}[1/7]${NC} Atualizando pacotes..."
+echo -e "${YELLOW}[1/6]${NC} Atualizando pacotes..."
 pkg update -y && pkg upgrade -y > /dev/null 2>&1
 
-echo -e "${YELLOW}[2/7]${NC} Instalando dependências do sistema..."
+echo -e "${YELLOW}[2/6]${NC} Instalando dependências do sistema..."
 pkg install -y nodejs ffmpeg git yarn python libwebp tmux build-essential clang > /dev/null 2>&1
 
-echo -e "${YELLOW}[3/7]${NC} Verificando Node.js..."
+echo -e "${YELLOW}[3/6]${NC} Verificando Node.js..."
 if ! command -v node &> /dev/null; then
     echo -e "${RED}[ERRO]${NC} Node.js não encontrado!"
     exit 1
 fi
 echo -e "      ${GREEN}Node.js:${NC} $(node --version)"
 
-echo -e "\n${YELLOW}[4/7]${NC} Instalando dependências do bot (pode demorar)..."
+echo -e "\n${YELLOW}[4/6]${NC} Instalando dependências do bot (pode demorar)..."
 
 if yarn install --network-timeout 120000 > /dev/null 2>&1; then
     echo -e "      ${GREEN}[OK]${NC} Dependências instaladas com Yarn"
@@ -60,24 +58,23 @@ else
     exit 1
 fi
 
-echo -e "\n${YELLOW}[5/7]${NC} Tentando compilar Sharp..."
+echo -e "\n${YELLOW}[5/6]${NC} Tentando compilar Sharp..."
 if npm rebuild sharp --build-from-source > /dev/null 2>&1; then
     echo -e "      ${GREEN}[OK]${NC} Sharp compilado com sucesso"
 else
     echo -e "      ${YELLOW}[AVISO]${NC} Sharp pode precisar de compilação manual depois"
 fi
 
-echo -e "\n${YELLOW}[6/7]${NC} Criando pastas e permissões..."
+echo -e "\n${YELLOW}[6/6]${NC} Criando pastas..."
 mkdir -p session temp Access
 chmod +x termux-setup.sh 2>/dev/null || true
-termux-setup-storage > /dev/null 2>&1
 
-echo -e "\n${YELLOW}[7/7]${NC} Verificando FFmpeg..."
-if command -v ffmpeg &> /dev/null; then
-    echo -e "      ${GREEN}[OK]${NC} FFmpeg encontrado"
-else
-    echo -e "      ${YELLOW}[AVISO]${NC} FFmpeg não encontrado"
-fi
+# ============================================
+#           PERMISSÃO DE ARMAZENAMENTO (EM BACKGROUND)
+# ============================================
+echo -e "\n${BLUE}[INFO]${NC} Configurando permissão de armazenamento..."
+echo -e "${YELLOW}[DICA]${NC} Pode aparecer uma janela pedindo permissão. Toque em 'Permitir'."
+termux-setup-storage > /dev/null 2>&1 &
 
 # ============================================
 #           FINALIZAÇÃO
@@ -98,7 +95,6 @@ echo ""
 echo -e "${WHITE}${BOLD}APÓS FECHAR O TERMUX:${NC}"
 echo -e "  ${CYAN}1.${NC} Abra o Termux novamente"
 echo -e "  ${CYAN}2.${NC} Rode: ${BLUE}tmux attach -t bot${NC}"
-echo -e "  ${CYAN}3.${NC} O bot voltará a funcionar"
 echo ""
 echo -e "${CYAN}Canal oficial: https://whatsapp.com/channel/0029VbArk5aBVJl7HTKxKw0j${NC}"
 echo ""
