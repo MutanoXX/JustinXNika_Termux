@@ -27,13 +27,25 @@ O **Justin X Nika** é um bot WhatsApp completo baseado em **@whiskeysockets/bai
 
 ### ✨ Principais Recursos
 
-| Categoria | Recursos |
-|-----------|----------|
-| **Downloads** | YouTube, Instagram, TikTok, Facebook |
-| **Grupo** | Kick, Promote, Demote, Tagall, Welcome |
-| **Mídia** | Sticker, OCR, TTS, Meme |
-| **Admin** | Owners, Premium, Configurações |
-| **Outros** | Auto-resposta, Boas-vindas, Áudio/Vídeo |
+#### 👑 Owner Menu
+- `.addprem` — Adicionar usuário Premium
+- `.delprem` — Remover usuário Premium
+- `.addown` — Adicionar novo Owner
+- `.tagsw` — Marcar Status
+- `.private` — Modo Privado
+- `.public` — Modo Público
+
+#### ⚔️ Geprek Menu (Combos / Ataques)
+- `.nikspam`
+- `.tinvis`
+- `.jusui`
+- `.nikfreze`
+- `.delayxcombobox`
+- `.xcombogod`
+
+#### 🔥 All Petinggi
+- **Justin**
+- **Depay**
 
 ---
 
