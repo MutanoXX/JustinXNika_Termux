@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # ============================================
 #   JUSTIN X NIKA - BOT WHATSAPP PARA TERMUX
-#   Versão 3.6 - Defensiva e Robusta (por MutanoX)
+#   Versão 3.7 - Instalação Mais Robusta (por MutanoX)
 # ============================================
 
 set +e
@@ -29,57 +29,80 @@ echo -e "${MAGENTA}${BOLD}        Adaptado para Termux por MutanoX${NC}\n"
 
 echo -e "${GREEN}[INFO]${NC} Iniciando instalação do Justin X Nika..."
 
-# 1. Atualizar pacotes
-echo -e "\n${YELLOW}[1/10]${NC} Atualizando pacotes..."
+# ============================================
+#           INSTALAÇÃO DAS DEPENDÊNCIAS
+# ============================================
+
+echo -e "\n${YELLOW}[1/9]${NC} Atualizando pacotes..."
 pkg update -y && pkg upgrade -y
 
-# 2. Instalar dependências principais
-echo -e "\n${YELLOW}[2/10]${NC} Instalando dependências..."
+echo -e "\n${YELLOW}[2/9]${NC} Instalando dependências do sistema..."
 pkg install -y nodejs ffmpeg git yarn python libwebp tmux build-essential clang
 
-# 3. Verificar Node.js
-echo -e "\n${YELLOW}[3/10]${NC} Verificando Node.js..."
+echo -e "\n${YELLOW}[3/9]${NC} Verificando Node.js..."
 if ! command -v node &> /dev/null; then
     echo -e "${RED}[ERRO]${NC} Node.js não encontrado!"
     exit 1
 fi
-node --version
+echo -e "${GREEN}[OK]${NC} Node.js: $(node --version)"
 
-# 4. Instalar dependências do bot
-echo -e "\n${YELLOW}[4/10]${NC} Instalando dependências do bot (pode demorar)..."
+# ============================================
+#     INSTALAÇÃO DAS DEPENDÊNCIAS DO BOT
+# ============================================
+echo -e "\n${YELLOW}[4/9]${NC} Instalando dependências do bot (pode demorar 5-15 min)..."
 
-if yarn install 2>/dev/null; then
-    echo -e "${GREEN}[OK]${NC} Yarn instalado com sucesso!"
-elif npm install --legacy-peer-deps 2>/dev/null; then
-    echo -e "${GREEN}[OK]${NC} npm instalado com sucesso!"
+DEPS_INSTALLED=false
+
+# Tenta com Yarn primeiro
+echo -e "${BLUE}[INFO]${NC} Tentando com Yarn..."
+if yarn install --network-timeout 100000 2>&1; then
+    echo -e "${GREEN}[✓]${NC} Dependências instaladas com Yarn!"
+    DEPS_INSTALLED=true
 else
-    echo -e "${RED}[ERRO]${NC} Falha ao instalar dependências."
-    echo -e "${YELLOW}[DICA]${NC} Tente rodar manualmente: yarn install"
-    exit 1
+    echo -e "${YELLOW}[AVISO]${NC} Yarn falhou. Tentando com npm..."
+    
+    # Tenta com npm
+    if npm install --legacy-peer-deps 2>&1; then
+        echo -e "${GREEN}[✓]${NC} Dependências instaladas com npm!"
+        DEPS_INSTALLED=true
+    else
+        echo -e "${RED}[ERRO]${NC} Falha ao instalar dependências."
+        echo -e "${YELLOW}[DICA]${NC} Tente manualmente:"
+        echo -e "       ${CYAN}cd ~/JustinXNika_Termux && yarn install${NC}"
+        exit 1
+    fi
 fi
 
-# 5. Tentar compilar Sharp
-echo -e "\n${YELLOW}[5/10]${NC} Tentando compilar Sharp..."
-if npm rebuild sharp --build-from-source 2>/dev/null; then
-    echo -e "${GREEN}[✓]${NC} Sharp compilado!"
+# ============================================
+#           TRATAMENTO DO SHARP
+# ============================================
+echo -e "\n${YELLOW}[5/9]${NC} Tentando compilar Sharp..."
+
+if npm rebuild sharp --build-from-source 2>&1; then
+    echo -e "${GREEN}[✓]${NC} Sharp compilado com sucesso!"
 else
     echo -e "${YELLOW}[AVISO]${NC} Sharp pode precisar de compilação manual depois."
+    echo -e "${YELLOW}[DICA]${NC} Rode: ${CYAN}npm rebuild sharp --build-from-source${NC}"
 fi
 
-# 6. Criar pastas
-echo -e "\n${YELLOW}[6/10]${NC} Criando pastas..."
+# ============================================
+#           CRIAR PASTAS E PERMISSÕES
+# ============================================
+echo -e "\n${YELLOW}[6/9]${NC} Criando pastas..."
 mkdir -p session temp Access
 
-# 7. Permissões
+echo -e "\n${YELLOW}[7/9]${NC} Configurando permissões..."
 chmod +x termux-setup.sh 2>/dev/null || true
 termux-setup-storage
 
-# 8. Configuração do Owner (opcional)
+# ============================================
+#       CONFIGURAÇÃO DO DONO (OPCIONAL)
+# ============================================
 echo -e "\n${CYAN}════════════════════════════════════════${NC}"
 echo -e "${CYAN}   CONFIGURAÇÃO DO DONO (OPCIONAL)${NC}"
 echo -e "${CYAN}════════════════════════════════════════${NC}\n"
 
-echo -e "${YELLOW}Deseja configurar o número do dono agora? (recomendado)${NC}"
+echo -e "${YELLOW}Deseja configurar o número do dono agora?${NC}"
 echo -e "  ${GREEN}[1] Sim${NC}"
 echo -e "  ${RED}[2] Não${NC}"
 echo ""
@@ -90,7 +113,6 @@ if [ "$CONFIG_OWNER" == "1" ]; then
     read -p "Digite seu número (ex: 5511999999999): " OWNER_NUMBER
     
     if [ ! -z "$OWNER_NUMBER" ]; then
-        # Atualiza config.js se existir
         if [ -f setting/config.js ]; then
             sed -i "s/global.owner = \['[^']*'\]/global.owner = ['$OWNER_NUMBER']/" setting/config.js 2>/dev/null || true
         fi
@@ -99,19 +121,20 @@ if [ "$CONFIG_OWNER" == "1" ]; then
     fi
 fi
 
-# 9. Verificar FFmpeg
-echo -e "\n${YELLOW}[9/10]${NC} Verificando FFmpeg..."
+# ============================================
+#              FINALIZAÇÃO
+# ============================================
+echo -e "\n${YELLOW}[8/9]${NC} Verificando FFmpeg..."
 ffmpeg -version | head -1 || echo -e "${YELLOW}[AVISO]${NC} FFmpeg não encontrado"
 
-# 10. Final
 echo -e "\n${GREEN}════════════════════════════════════════${NC}"
-echo -e "${GREEN}     ✓ INSTALAÇÃO CONCLUÍDA!${NC}"
+echo -e "${GREEN}     ✓ INSTALAÇÃO CONCLUÍDA COM SUCESSO!${NC}"
 echo -e "${GREEN}════════════════════════════════════════${NC}\n"
 
-echo -e "${WHITE}Para iniciar o bot:${NC}"
+echo -e "${WHITE}${BOLD}Para iniciar o bot:${NC}"
 echo -e "  ${BLUE}yarn start${NC}   ou   ${BLUE}node connect.js${NC}"
 echo ""
-echo -e "${WHITE}Recomendado:${NC}"
+echo -e "${WHITE}${BOLD}Recomendado (tmux):${NC}"
 echo -e "  tmux new -s bot"
 echo -e "  node connect.js"
 echo ""
