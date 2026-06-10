@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # ============================================
 #   JUSTIN X NIKA - BOT WHATSAPP PARA TERMUX
-#   Versão 3.5 - Mais Seguro e Robusto (por MutanoX)
+#   Versão 3.6 - Defensiva e Robusta (por MutanoX)
 # ============================================
 
 set +e
@@ -19,160 +19,103 @@ NC='\e[0m'
 
 clear
 
-# ============================================
-#           CABEÇALHO DECORADO
-# ============================================
 echo -e "${CYAN}"
 echo "╔══════════════════════════════════════════════════════════════╗"
-echo "║                                                              ║"
 echo "║     ██████╗  ██████╗ ████████╗    ██╗  ██╗    ███╗   ██╗    ║"
-echo "║     ██╔══██╗██╔═══██╗╚══██╔══╝    ╚██╗██╔╝    ████╗  ██║    ║"
-echo "║     ██████╔╝██║   ██║   ██║        ╚███╔╝     ██╔██╗ ██║    ║"
-echo "║     ██╔══██╗██║   ██║   ██║        ██╔██╗     ██║╚██╗██║    ║"
-echo "║     ██████╔╝╚██████╔╝   ██║       ██╔╝ ██╗    ██║ ╚████║    ║"
-echo "║     ╚═════╝  ╚═════╝    ╚═╝       ╚═╝  ╚═╝    ╚═╝  ╚═══╝    ║"
-echo "║                                                              ║"
 echo "║           🤖 BOT WHATSAPP MULTI-DEVICE 🤖                    ║"
-echo "║                                                              ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
 echo -e "${NC}"
+echo -e "${MAGENTA}${BOLD}        Adaptado para Termux por MutanoX${NC}\n"
 
-echo -e "${MAGENTA}${BOLD}        Adaptado para Termux por MutanoX${NC}"
-echo -e "${CYAN}              https://github.com/MutanoXX${NC}\n"
+echo -e "${GREEN}[INFO]${NC} Iniciando instalação do Justin X Nika..."
 
-echo -e "${GREEN}[INFO]${NC} Iniciando instalação e configuração do Justin X Nika..."
-
-# ============================================
-#           INSTALAÇÃO DAS DEPENDÊNCIAS
-# ============================================
-
-echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [1/10] Atualizando pacotes do Termux...${NC}"
-echo -e "${YELLOW}════════════════════════════════════════${NC}"
+# 1. Atualizar pacotes
+echo -e "\n${YELLOW}[1/10]${NC} Atualizando pacotes..."
 pkg update -y && pkg upgrade -y
 
-echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [2/10] Instalando dependências do sistema...${NC}"
-echo -e "${YELLOW}════════════════════════════════════════${NC}"
-pkg install -y nodejs ffmpeg git yarn python libwebp libjpeg-turbo libpng python-pip tmux
+# 2. Instalar dependências principais
+echo -e "\n${YELLOW}[2/10]${NC} Instalando dependências..."
+pkg install -y nodejs ffmpeg git yarn python libwebp tmux build-essential clang
 
-echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [3/10] Instalando ferramentas de compilação...${NC}"
-echo -e "${YELLOW}════════════════════════════════════════${NC}"
-pkg install -y build-essential clang make cmake pkg-config
-
-echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [4/10] Verificando Node.js e Yarn...${NC}"
-echo -e "${YELLOW}════════════════════════════════════════${NC}"
-node --version || { echo -e "${RED}[ERRO]${NC} Node.js não encontrado!"; exit 1; }
-yarn --version || { echo -e "${RED}[ERRO]${NC} Yarn não encontrado!"; exit 1; }
-
-echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [5/10] Instalando dependências do bot...${NC}"
-echo -e "${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${BLUE}[INFO]${NC} Isso pode demorar 5-15 minutos..."
-
-INSTALL_SUCCESS=false
-
-if yarn install; then
-    echo -e "${GREEN}[OK]${NC} Dependências instaladas com Yarn!"
-    INSTALL_SUCCESS=true
-else
-    echo -e "${YELLOW}[AVISO]${NC} Yarn falhou, tentando com npm..."
-    if npm install --legacy-peer-deps; then
-        echo -e "${GREEN}[OK]${NC} Dependências instaladas com npm!"
-        INSTALL_SUCCESS=true
-    fi
+# 3. Verificar Node.js
+echo -e "\n${YELLOW}[3/10]${NC} Verificando Node.js..."
+if ! command -v node &> /dev/null; then
+    echo -e "${RED}[ERRO]${NC} Node.js não encontrado!"
+    exit 1
 fi
+node --version
 
-if [ "$INSTALL_SUCCESS" = false ]; then
-    echo -e "${RED}[ERRO]${NC} Falha na instalação das dependências."
+# 4. Instalar dependências do bot
+echo -e "\n${YELLOW}[4/10]${NC} Instalando dependências do bot (pode demorar)..."
+
+if yarn install 2>/dev/null; then
+    echo -e "${GREEN}[OK]${NC} Yarn instalado com sucesso!"
+elif npm install --legacy-peer-deps 2>/dev/null; then
+    echo -e "${GREEN}[OK]${NC} npm instalado com sucesso!"
+else
+    echo -e "${RED}[ERRO]${NC} Falha ao instalar dependências."
+    echo -e "${YELLOW}[DICA]${NC} Tente rodar manualmente: yarn install"
     exit 1
 fi
 
-# ============================================
-#           TRATAMENTO ESPECIAL DO SHARP
-# ============================================
-echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [6/10] Tentando compilar Sharp...${NC}"
-echo -e "${YELLOW}════════════════════════════════════════${NC}"
-
-if npm rebuild sharp --build-from-source; then
-    echo -e "${GREEN}[✓]${NC} Sharp compilado com sucesso!"
+# 5. Tentar compilar Sharp
+echo -e "\n${YELLOW}[5/10]${NC} Tentando compilar Sharp..."
+if npm rebuild sharp --build-from-source 2>/dev/null; then
+    echo -e "${GREEN}[✓]${NC} Sharp compilado!"
 else
-    echo -e "${YELLOW}[AVISO]${NC} Falha ao compilar Sharp. Rode manualmente depois se necessário:"
-    echo -e "       ${CYAN}npm rebuild sharp --build-from-source${NC}"
+    echo -e "${YELLOW}[AVISO]${NC} Sharp pode precisar de compilação manual depois."
 fi
 
-echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [7/10] Criando pastas necessárias...${NC}"
-echo -e "${YELLOW}════════════════════════════════════════${NC}"
+# 6. Criar pastas
+echo -e "\n${YELLOW}[6/10]${NC} Criando pastas..."
 mkdir -p session temp Access
 
-echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [8/10] Configurando permissões...${NC}"
-echo -e "${YELLOW}════════════════════════════════════════${NC}"
-chmod +x termux-setup.sh
-chmod +x connect.js 2>/dev/null || true
+# 7. Permissões
+chmod +x termux-setup.sh 2>/dev/null || true
 termux-setup-storage
 
-# ============================================
-#       CONFIGURAÇÃO INTERATIVA DO OWNER
-# ============================================
+# 8. Configuração do Owner (opcional)
 echo -e "\n${CYAN}════════════════════════════════════════${NC}"
-echo -e "${CYAN}       CONFIGURAÇÃO DO DONO DO BOT${NC}"
+echo -e "${CYAN}   CONFIGURAÇÃO DO DONO (OPCIONAL)${NC}"
 echo -e "${CYAN}════════════════════════════════════════${NC}\n"
 
-echo -e "${YELLOW}Deseja configurar o número do dono agora?${NC}"
-echo -e "  ${GREEN}[1] Sim${NC}   → Inserir meu número"
-echo -e "  ${RED}[2] Não${NC}   → Usar configuração padrão"
+echo -e "${YELLOW}Deseja configurar o número do dono agora? (recomendado)${NC}"
+echo -e "  ${GREEN}[1] Sim${NC}"
+echo -e "  ${RED}[2] Não${NC}"
 echo ""
-read -p "Escolha (1 ou 2): " CONFIG_OWNER
+read -p "Escolha: " CONFIG_OWNER
 
 if [ "$CONFIG_OWNER" == "1" ]; then
     echo ""
-    echo -e "${BLUE}Digite o número do dono (sem + e sem espaços):${NC}"
-    echo -e "Exemplo: ${YELLOW}5511999999999${NC}"
-    read -p "Número: " OWNER_NUMBER
+    read -p "Digite seu número (ex: 5511999999999): " OWNER_NUMBER
     
     if [ ! -z "$OWNER_NUMBER" ]; then
+        # Atualiza config.js se existir
         if [ -f setting/config.js ]; then
-            sed -i "s/global.owner = \['[^']*'\]/global.owner = ['$OWNER_NUMBER']/" setting/config.js
+            sed -i "s/global.owner = \['[^']*'\]/global.owner = ['$OWNER_NUMBER']/" setting/config.js 2>/dev/null || true
         fi
         echo "[\"$OWNER_NUMBER\"]" > Access/Own.json
-        echo -e "${GREEN}[✓]${NC} Número configurado com sucesso: ${YELLOW}$OWNER_NUMBER${NC}"
-    else
-        echo -e "${YELLOW}[!]${NC} Número vazio. Mantendo padrão."
+        echo -e "${GREEN}[✓]${NC} Número salvo: $OWNER_NUMBER"
     fi
-else
-    echo -e "${YELLOW}[!]${NC} Mantendo configuração padrão."
 fi
 
-# ============================================
-#              FINALIZAÇÃO
-# ============================================
-echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [9/10] Verificando FFmpeg...${NC}"
-echo -e "${YELLOW}════════════════════════════════════════${NC}"
-ffmpeg -version | head -1 || echo -e "${YELLOW}[AVISO]${NC} FFmpeg pode precisar de reinstalação"
+# 9. Verificar FFmpeg
+echo -e "\n${YELLOW}[9/10]${NC} Verificando FFmpeg..."
+ffmpeg -version | head -1 || echo -e "${YELLOW}[AVISO]${NC} FFmpeg não encontrado"
 
+# 10. Final
 echo -e "\n${GREEN}════════════════════════════════════════${NC}"
-echo -e "${GREEN}     ✓ INSTALAÇÃO CONCLUÍDA COM SUCESSO!${NC}"
+echo -e "${GREEN}     ✓ INSTALAÇÃO CONCLUÍDA!${NC}"
 echo -e "${GREEN}════════════════════════════════════════${NC}\n"
 
-echo -e "${WHITE}${BOLD}COMO INICIAR O BOT:${NC}"
-echo -e "  ${CYAN}▶${NC}  ${BLUE}yarn start${NC}"
-echo -e "  ${CYAN}▶${NC}  ${BLUE}node connect.js${NC}"
+echo -e "${WHITE}Para iniciar o bot:${NC}"
+echo -e "  ${BLUE}yarn start${NC}   ou   ${BLUE}node connect.js${NC}"
 echo ""
-echo -e "${WHITE}${BOLD}RECOMENDADO (usar tmux):${NC}"
-echo -e "  ${CYAN}1.${NC} tmux new -s bot"
-echo -e "  ${CYAN}2.${NC} node connect.js"
-echo -e "  ${CYAN}3.${NC} (Ctrl+B → D para minimizar)"
+echo -e "${WHITE}Recomendado:${NC}"
+echo -e "  tmux new -s bot"
+echo -e "  node connect.js"
 echo ""
-echo -e "${WHITE}${BOLD}CANAL OFICIAL DO BOT:${NC}"
-echo -e "  ${CYAN}https://whatsapp.com/channel/0029VbArk5aBVJl7HTKxKw0j${NC}"
+echo -e "${CYAN}Canal oficial: https://whatsapp.com/channel/0029VbArk5aBVJl7HTKxKw0j${NC}"
 echo ""
-echo -e "${MAGENTA}${BOLD}Adaptado para Termux por MutanoX${NC}"
-echo -e "${CYAN}https://github.com/MutanoXX/JustinXNika_Termux${NC}"
-echo ""
+echo -e "${MAGENTA}Adaptado por MutanoX${NC}"
 echo -e "${GREEN}════════════════════════════════════════${NC}"
