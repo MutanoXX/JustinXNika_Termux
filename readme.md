@@ -138,6 +138,30 @@ tmux attach -t bot
 ### Parar o Bot
 Pressione `CTRL + C`
 
+### Após Fechar o Termux
+
+Se você fechou o Termux e quer voltar o bot:
+
+```bash
+# 1. Abra o Termux
+
+# 2. Entre na pasta do bot
+cd JustinXNika_Termux
+
+# 3. Volte para a sessão do tmux
+tmux attach -t bot
+```
+
+Se a sessão não existir mais:
+
+```bash
+# Crie uma nova sessão
+tmux new -s bot
+
+# Rode o bot
+yarn start
+```
+
 ---
 
 ## ❗ Problemas Comuns + Soluções
