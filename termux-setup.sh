@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # ============================================
 #   JUSTIN X NIKA - BOT WHATSAPP PARA TERMUX
-#   Versão 3.2 - Otimizado por MutanoX
+#   Versão 3.3 - Otimizado por MutanoX (Sharp Fix)
 # ============================================
 
 set -e
@@ -47,37 +47,65 @@ echo -e "${GREEN}[INFO]${NC} Iniciando instalação e configuração do Justin X
 # ============================================
 
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [1/8] Atualizando pacotes do Termux...${NC}"
+echo -e "${YELLOW}  [1/9] Atualizando pacotes do Termux...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
 pkg update -y && pkg upgrade -y
 
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [2/8] Instalando dependências do sistema...${NC}"
+echo -e "${YELLOW}  [2/9] Instalando dependências do sistema...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
 pkg install -y nodejs ffmpeg git yarn python libwebp libjpeg-turbo libpng python-pip tmux
 
+# Dependências extras para compilar sharp (importante!)
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [3/8] Verificando Node.js e Yarn...${NC}"
+echo -e "${YELLOW}  [3/9] Instalando ferramentas de compilação...${NC}"
+echo -e "${YELLOW}════════════════════════════════════════${NC}"
+pkg install -y build-essential clang make cmake pkg-config
+
+echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
+echo -e "${YELLOW}  [4/9] Verificando Node.js e Yarn...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
 node --version || { echo -e "${RED}[ERRO]${NC} Node.js não encontrado!"; exit 1; }
 yarn --version || { echo -e "${RED}[ERRO]${NC} Yarn não encontrado!"; exit 1; }
 
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [4/8] Instalando dependências do bot...${NC}"
+echo -e "${YELLOW}  [5/9] Instalando dependências do bot...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${BLUE}[INFO]${NC} Isso pode demorar alguns minutos..."
+echo -e "${BLUE}[INFO]${NC} Isso pode demorar 5-15 minutos..."
 
-# REMOVIDO: npm config set python python (não é mais suportado)
-
+# Tenta instalar normalmente primeiro
 if yarn install; then
-    echo -e "${GREEN}[OK]${NC} Dependências instaladas com sucesso!"
+    echo -e "${GREEN}[OK]${NC} Dependências instaladas com Yarn!"
 else
-    echo -e "${YELLOW}[AVISO]${NC} Tentando com npm..."
-    npm install --legacy-peer-deps
+    echo -e "${YELLOW}[AVISO]${NC} Yarn falhou, tentando com npm..."
+    if npm install --legacy-peer-deps; then
+        echo -e "${GREEN}[OK]${NC} Dependências instaladas com npm!"
+    else
+        echo -e "${RED}[ERRO]${NC} Falha na instalação das dependências."
+        exit 1
+    fi
+fi
+
+# ============================================
+#           TRATAMENTO ESPECIAL DO SHARP
+# ============================================
+echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
+echo -e "${YELLOW}  [6/9] Verificando Sharp (pode precisar de rebuild)...${NC}"
+echo -e "${YELLOW}════════════════════════════════════════${NC}"
+
+# Tenta fazer rebuild do sharp com build-from-source
+echo -e "${BLUE}[INFO]${NC} Tentando compilar Sharp do zero (isso pode demorar bastante)..."
+
+if npm rebuild sharp --build-from-source; then
+    echo -e "${GREEN}[✓]${NC} Sharp compilado com sucesso!"
+else
+    echo -e "${YELLOW}[AVISO]${NC} Falha no rebuild do Sharp. O bot pode ter problemas com imagens."
+    echo -e "${YELLOW}[DICA]${NC} Se der erro depois, rode manualmente:"
+    echo -e "       ${CYAN}npm rebuild sharp --build-from-source${NC}"
 fi
 
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [5/8] Criando pastas e permissões...${NC}"
+echo -e "${YELLOW}  [7/9] Criando pastas e permissões...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
 mkdir -p session temp
 chmod +x termux-setup.sh
@@ -118,7 +146,7 @@ fi
 #              FINALIZAÇÃO
 # ============================================
 echo -e "\n${YELLOW}════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  [6/8] Verificando FFmpeg...${NC}"
+echo -e "${YELLOW}  [8/9] Verificando FFmpeg...${NC}"
 echo -e "${YELLOW}════════════════════════════════════════${NC}"
 ffmpeg -version | head -1 || echo -e "${YELLOW}[AVISO]${NC} FFmpeg pode precisar de reinstalação"
 
